@@ -5,7 +5,7 @@ SRC = $(wildcard *.c)
 MSPDEBUG = mspdebug
 MSPPROGRAMMER = rf2500
 
-CC = msp430-gcc
+CC = /usr/local/msp430/bin/gcc
 
 # Compiler flag to set the C Standard level.
 #     gnu89 = c89 plus GCC extensions
@@ -13,7 +13,7 @@ CC = msp430-gcc
 CSTANDARD = -std=gnu99
 
 all: build
-	
+
 install: build
 	$(MSPDEBUG) $(MSPPROGRAMMER) "erase"
 	$(MSPDEBUG) $(MSPPROGRAMMER) "prog $(TARGET).elf"

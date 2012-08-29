@@ -1,24 +1,19 @@
-#include <stdint.h>
-#include <msp430g2001.h>
-#include <string.h>
-#include "option.h"
+#include <msp430g2553.h>
 
-int main(void) {
-	volatile int i;
+#define LED_1 0x40                      // BIT6
 
-	// stop watchdog timer
-	WDTCTL = WDTPW | WDTHOLD;
-	// set up bit 0 and 6 of P1 as output
-	P1DIR = 0x41;
-	// intialize P1 to 0
-	P1OUT = 0x00;
+void main(void) {
+    WDTCTL = WDTPW + WDTHOLD;           // Stop watchdog timer
+    P1DIR &= ~0x08;                 // Push Port 1 P1.3 (push button) as input
+    P1DIR |= LED_1;                     // Set P1.6 (LED) to output direction
+    P1SEL &= ~0x08;                 // Select Port 1 P1.3 (push button)
+    P1OUT &= ~LED_1;                    // Set the LED off
 
-	// loop forever
-	for (;;) {
-		P1OUT |= option_value("GREEN");
-		// delay for a while
-		for (i = 0; i < 0x6000; i++);
-		P1OUT &= ~option_value("GREEN");
-		for (i = 0; i < 0x6000; i++);
-	}
+    while( 1 ) {
+        if( (P1IN & 0x08) == 0)             // Push button down when bit 3 == 0
+            P1OUT |= LED_1;         // Set LED on when button down
+        else
+            P1OUT &= ~LED_1;            // Set LED off when button off
+    }
 }
+
